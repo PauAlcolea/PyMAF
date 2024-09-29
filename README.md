@@ -1,4 +1,4 @@
-🚩 **[Update]** The compatible EFT label files are now available [here](https://cloud.tsinghua.edu.cn/d/635c717375664cd6b3f5), which helps to train a much stronger HMR baseline. See [issue #58](https://github.com/HongwenZhang/PyMAF/issues/58).
+🚩 **[Update]** The compatible EFT label files are now available [here](https://pan.bnu.edu.cn/l/81f0v6), which helps to train a much stronger HMR baseline. See [issue #58](https://github.com/HongwenZhang/PyMAF/issues/58).
 
 # PyMAF [ICCV'21 Oral] & PyMAF-X [TPAMI'23]
 This repository contains the code for the following papers:
@@ -78,7 +78,7 @@ bash fetch_data.sh
 
 > Fetch preprocessed data from [SPIN](https://github.com/nkolot/SPIN#fetch-data).
 
-> Fetch final_fits data from [SPIN](https://github.com/nkolot/SPIN#final-fits). [important note: using [EFT](https://github.com/facebookresearch/eft) fits for training is much better. Compatible npz files are available [here](https://cloud.tsinghua.edu.cn/d/635c717375664cd6b3f5)]
+> Fetch final_fits data from [SPIN](https://github.com/nkolot/SPIN#final-fits). [important note: using [EFT](https://github.com/facebookresearch/eft) fits for training is much better. Compatible npz files are available [here](https://pan.bnu.edu.cn/l/81f0v6)]
 
 > Download the [pre-trained model](https://drive.google.com/drive/folders/1R4_Vi4TpCQ26-6_b2PhjTBg-nBxZKjz6?usp=sharing) and put it into the `./data/pretrained_model` directory.
 
@@ -145,7 +145,7 @@ python3 eval.py --checkpoint=data/pretrained_model/PyMAF_model_checkpoint.pt --d
 
 ## Training
 
-🚀 **[Important update]: Using [EFT](https://github.com/facebookresearch/eft) fits is recommended, as it can significantly improve the baseline. Compatible data is available [here](https://cloud.tsinghua.edu.cn/d/635c717375664cd6b3f5). See [issue #58](https://github.com/HongwenZhang/PyMAF/issues/58) for more training details using the EFT labels.**
+🚀 **[Important update]: Using [EFT](https://github.com/facebookresearch/eft) fits is recommended, as it can significantly improve the baseline. Compatible data is available [here](https://pan.bnu.edu.cn/l/81f0v6). See [issue #58](https://github.com/HongwenZhang/PyMAF/issues/58) for more training details using the EFT labels.**
 
 Below messages are the training details of the conference version of PyMAF.
 
