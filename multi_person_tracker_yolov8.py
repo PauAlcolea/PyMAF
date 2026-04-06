@@ -2,8 +2,80 @@ import os
 from typing import Dict, List, Optional, Union
 
 import numpy as np
-from multi_person_tracker import Sort
+try:
+    from multi_person_tracker import Sort  # type: ignore
+except Exception:
+    Sort = None
 from ultralytics import YOLO
+
+
+def _bbox_iou_xyxy(a: np.ndarray, b: np.ndarray) -> float:
+    ax1, ay1, ax2, ay2 = [float(v) for v in a]
+    bx1, by1, bx2, by2 = [float(v) for v in b]
+    ix1 = max(ax1, bx1)
+    iy1 = max(ay1, by1)
+    ix2 = min(ax2, bx2)
+    iy2 = min(ay2, by2)
+    inter = max(0.0, ix2 - ix1) * max(0.0, iy2 - iy1)
+    if inter <= 0.0:
+        return 0.0
+    area_a = max(0.0, ax2 - ax1) * max(0.0, ay2 - ay1)
+    area_b = max(0.0, bx2 - bx1) * max(0.0, by2 - by1)
+    denom = area_a + area_b - inter
+    if denom <= 0.0:
+        return 0.0
+    return inter / denom
+
+
+class _SimpleSort:
+    """Minimal IoU tracker fallback when multi_person_tracker is unavailable."""
+
+    def __init__(self, iou_thr: float = 0.3, max_age: int = 5) -> None:
+        self.iou_thr = float(iou_thr)
+        self.max_age = int(max_age)
+        self.next_id = 1
+        self.frame_idx = -1
+        self.tracks = {}  # id -> {"bbox": np.ndarray(4), "last": int}
+
+    def update(self, detections: np.ndarray) -> np.ndarray:
+        self.frame_idx += 1
+        dets = np.asarray(detections, dtype=np.float32)
+        if dets.size == 0:
+            self._expire_tracks()
+            return np.empty((0, 5), dtype=np.float32)
+
+        boxes = dets[:, :4]
+        assigned_tracks = set()
+        out_rows = []
+
+        for box in boxes:
+            best_id = None
+            best_iou = 0.0
+            for tid, t in self.tracks.items():
+                if tid in assigned_tracks:
+                    continue
+                iou = _bbox_iou_xyxy(box, t["bbox"])
+                if iou > best_iou:
+                    best_iou = iou
+                    best_id = tid
+
+            if best_id is None or best_iou < self.iou_thr:
+                best_id = self.next_id
+                self.next_id += 1
+
+            assigned_tracks.add(best_id)
+            self.tracks[best_id] = {"bbox": box.copy(), "last": self.frame_idx}
+            out_rows.append([box[0], box[1], box[2], box[3], float(best_id)])
+
+        self._expire_tracks()
+        return np.asarray(out_rows, dtype=np.float32)
+
+    def _expire_tracks(self) -> None:
+        alive = {}
+        for tid, t in self.tracks.items():
+            if (self.frame_idx - int(t["last"])) <= self.max_age:
+                alive[tid] = t
+        self.tracks = alive
 
 
 class MPT8:
@@ -24,7 +96,7 @@ class MPT8:
                 if self._check_extension(filename)
             ]
         )
-        tracker = Sort()
+        tracker = Sort() if Sort is not None else _SimpleSort()
         trackers = []
         # predictions = self.model(image_paths)  # too much of ram! 6.5GB vs <2GB
         for image_path in image_paths:

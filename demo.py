@@ -25,7 +25,10 @@ import joblib
 import argparse
 import numpy as np
 from tqdm import tqdm
-from multi_person_tracker import MPT
+try:
+    from multi_person_tracker import MPT
+except Exception:
+    MPT = None
 from multi_person_tracker_yolov8 import MPT8
 from torch.utils.data import DataLoader
 import os.path as osp
@@ -222,6 +225,11 @@ def run_video_demo(args):
             tracking_results = run_posetracker(video_file, staf_folder=args.staf_dir, display=args.display)
         else:
             if args.detector in ['yolo', 'yolov3']:
+                if MPT is None:
+                    raise ImportError(
+                        "multi_person_tracker is required for detector='yolo'/'yolov3'. "
+                        "Install it or use --detector yolov8."
+                    )
                 # run multi object tracker
                 mot = MPT(
                     device=device,
