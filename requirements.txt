@@ -1,7 +1,7 @@
 tqdm
 yacs
 numba
-numpy
+numpy<1.24
 filterpy
 cython
 chumpy
@@ -11,9 +11,9 @@ pyrender
 matplotlib
 json_tricks
 scikit-image
-opencv-python
+opencv-python-headless
 scikit-image
-scipy==1.2.2
+scipy
 tensorboardx
 smplx==0.1.28
 torchgeometry

@@ -27,6 +27,21 @@ import json
 from core import path_config, constants
 from utils import pose_tracker
 
+# PyMAF depends on chumpy via smplx loading, and chumpy still expects deprecated
+# numpy aliases removed in numpy>=1.24.
+_NP_COMPAT_ALIASES = {
+    "bool": bool,
+    "int": int,
+    "float": float,
+    "complex": complex,
+    "object": object,
+    "str": str,
+    "unicode": str,
+}
+for _name, _value in _NP_COMPAT_ALIASES.items():
+    if not hasattr(np, _name):
+        setattr(np, _name, _value)
+
 SMPL_MEAN_PARAMS = path_config.SMPL_MEAN_PARAMS
 SMPL_MODEL_DIR = path_config.SMPL_MODEL_DIR
 H36M_TO_J17 = [6, 5, 4, 1, 2, 3, 16, 15, 14, 11, 12, 13, 8, 10, 0, 7, 9]

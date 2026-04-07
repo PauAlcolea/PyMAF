@@ -48,9 +48,9 @@ RES_MODEL:
   - 4
 
 POSE_RES_MODEL:
-  INIT_WEIGHTS: True
+  INIT_WEIGHTS: False
   NAME: 'pose_resnet'
-  PRETR_SET: 'imagenet'   # 'none' 'imagenet' 'coco'
+  PRETR_SET: 'none'       # 'none' 'imagenet' 'coco'
   # PRETRAINED: 'data/pretrained_model/resnet50-19c8e357.pth'
   PRETRAINED_IM: 'data/pretrained_model/resnet50-19c8e357.pth'
   PRETRAINED_COCO: 'data/pretrained_model/pose_resnet_50_256x192.pth.tar'
